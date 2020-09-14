@@ -11,6 +11,8 @@ class Result {
   Map<String, double> crack_times_seconds;
   Map<String, String> crack_times_display;
 
+  int calc_time;
+
   void operator []=(String key, value) {
     switch (key) {
       case 'crack_times_display':

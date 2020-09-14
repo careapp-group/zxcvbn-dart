@@ -6,6 +6,8 @@ import './src/matching.dart';
 import './src/scoring.dart';
 import './src/time_estimates.dart';
 
+export 'package:zxcvbn/src/result.dart';
+
 class Zxcvbn {
   Result evaluate(String password, {List<String> userInputs = const []}) {
     final start = _time;
@@ -16,7 +18,7 @@ class Zxcvbn {
     final List<PasswordMatch> matches = matching.omnimatch(password);
     final Result result =
         scoring.most_guessable_match_sequence(password, matches);
-    final calc_time = _time - start;
+    result.calc_time = _time - start;
 
     final attack_times = time_estimates.estimate_attack_times(result.guesses);
     attack_times.forEach((prop, val) {
