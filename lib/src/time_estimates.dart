@@ -8,7 +8,7 @@ class time_estimates {
     };
     final crack_times_display = <String, String>{};
     for (final scenario in crack_times_seconds.keys) {
-      final seconds = crack_times_seconds[scenario];
+      final seconds = crack_times_seconds[scenario]!;
       crack_times_display[scenario] = display_time(seconds);
     }
     return {
@@ -35,7 +35,7 @@ class time_estimates {
 
   static String display_time(double seconds) {
     int base;
-    int display_num;
+    int? display_num;
     String display_str;
     const minute = 60;
     const hour = minute * 60;

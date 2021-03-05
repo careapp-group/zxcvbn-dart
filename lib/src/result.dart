@@ -1,17 +1,17 @@
 import 'package:zxcvbn/src/feedback.dart';
 
 class Result {
-  String password;
-  int guesses;
-  double guesses_log10;
+  String? password;
+  late int guesses;
+  late double guesses_log10;
   dynamic sequence;
-  Feedback feedback;
-  double score;
+  late Feedback feedback;
+  double? score;
 
-  Map<String, double> crack_times_seconds;
-  Map<String, String> crack_times_display;
+  Map<String, double>? crack_times_seconds;
+  Map<String, String>? crack_times_display;
 
-  int calc_time;
+  int? calc_time;
 
   void operator []=(String key, value) {
     switch (key) {

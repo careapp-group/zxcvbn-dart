@@ -1,37 +1,37 @@
 class PasswordMatch {
-  String pattern;
-  int i;
-  int j;
-  String token;
-  String matched_word;
+  String? pattern;
+  int? i;
+  int? j;
+  String? token;
+  String? matched_word;
   dynamic rank;
-  String dictionary_name;
-  bool reversed;
-  bool l33t;
-  double guesses;
-  double guesses_log10;
-  int base_guesses;
-  int repeat_count;
-  bool ascending;
-  String regex_name;
+  String? dictionary_name;
+  bool? reversed;
+  bool? l33t;
+  double? guesses;
+  double? guesses_log10;
+  int? base_guesses;
+  int? repeat_count;
+  bool? ascending;
+  String? regex_name;
   dynamic regex_match;
-  int year;
-  int month;
-  int day;
-  String separator;
-  String graph;
-  int turns;
-  int shifted_count;
-  int uppercase_variations;
-  int l33t_variations;
-  Map sub;
-  String base_token;
+  int? year;
+  int? month;
+  int? day;
+  String? separator;
+  String? graph;
+  int? turns;
+  int? shifted_count;
+  int? uppercase_variations;
+  int? l33t_variations;
+  Map? sub;
+  String? base_token;
   dynamic base_matches;
-  bool has_full_year;
-  String sub_display;
+  bool? has_full_year;
+  String? sub_display;
 
-  String sequence_name;
-  int sequence_space;
+  String? sequence_name;
+  int? sequence_space;
 
   /// The javascript version uses a mix of array index access and dot notation
   /// Dart doesn't support that on classes, so we we are overriding operator[]

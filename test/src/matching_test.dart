@@ -18,8 +18,8 @@ genpws(pattern, prefixes, suffixes) {
   final result = [];
   for (final prefix in prefixes) {
     for (final suffix in suffixes) {
-      int i = prefix.length;
-      int j = prefix.length + pattern.length - 1;
+      int? i = prefix.length;
+      int? j = prefix.length + pattern.length - 1;
       result.add([prefix + pattern + suffix, i, j]);
     }
   }
@@ -53,8 +53,8 @@ check_matches(prefix, List<PasswordMatch> matches, pattern_names, patterns, ijs,
     final pattern_name = pattern_names[k];
     final pattern = patterns[k];
 
-    int i = ijs[k][0];
-    int j = ijs[k][1];
+    int? i = ijs[k][0];
+    int? j = ijs[k][1];
 
     msg = "${prefix}: matches[${k}].pattern == '${pattern_name}'";
     expect(match.pattern, pattern_name, reason: msg);
@@ -123,8 +123,8 @@ void main() {
       ['', <String, String>{}, ''],
       ['abc', <String, String>{}, 'abc'],
     ]) {
-      final String string = testCase[0];
-      final Map<String, String> map = testCase[1];
+      final String string = testCase[0] as String;
+      final Map<String, String> map = testCase[1] as Map<String, String>;
       final result = testCase[2];
       final msg = "translates '${string}' to '${result}' with provided charmap";
       expect(matching.translate(string, map), result, reason: msg);
@@ -368,7 +368,7 @@ void main() {
       final expected = testCase[1];
       final msg =
           "reduces l33t table to only the substitutions that a password might be employing";
-      expect(matching.relevant_l33t_subtable(pw, test_table), expected,
+      expect(matching.relevant_l33t_subtable(pw as String, test_table), expected,
           reason: msg);
     }
 
@@ -405,8 +405,8 @@ void main() {
         ]
       ],
     ]) {
-      final Map<String, List<String>> table = testCase[0];
-      final List<Map<String, String>> subs = testCase[1];
+      final Map<String, List<String>> table = testCase[0] as Map<String, List<String>>;
+      final List<Map<String, String>> subs = testCase[1] as List<Map<String, String>>;
       final msg =
           "enumerates the different sets of l33t substitutions a password might be using";
       expect(matching.enumerate_l33t_subs(table), subs, reason: msg);
@@ -560,13 +560,13 @@ void main() {
       ['aoEP%yIxkjq:', 'dvorak', 4, 5],
       [';qoaOQ:Aoq;a', 'dvorak', 11, 4],
     ]) {
-      final String pattern = testCase[0];
+      final String pattern = testCase[0] as String;
       final keyboard = testCase[1];
       final turns = testCase[2];
       final shifts = testCase[3];
 
-      final _graphs = <String, Map<String, List<String>>>{};
-      _graphs[keyboard] = adjacency_graphs[keyboard];
+      final Map<String, Map<String, List<String?>>?> _graphs = <String, Map<String, List<String>>?>{};
+      _graphs[keyboard as String] = adjacency_graphs[keyboard];
       List<PasswordMatch> matches = matching.spatial_match(pattern, _graphs);
       String msg = "matches '#{pattern}' as a #{keyboard} pattern";
       check_matches(msg, matches, 'spatial', [
@@ -608,8 +608,8 @@ void main() {
 
     for (final testCase in genpwsResult) {
       String password = testCase[0];
-      int i = testCase[1];
-      int j = testCase[2];
+      int? i = testCase[1];
+      int? j = testCase[2];
 
       matches = matching.sequence_match(password);
       msg = "matches embedded sequence patterns ${password}";
@@ -638,9 +638,9 @@ void main() {
       ['0369', 'digits', true],
       ['97531', 'digits', false],
     ]) {
-      pattern = testCase[0];
-      String name = testCase[1];
-      bool is_ascending = testCase[2];
+      pattern = testCase[0] as String;
+      String name = testCase[1] as String;
+      bool is_ascending = testCase[2] as bool;
       List<PasswordMatch> matches = matching.sequence_match(pattern);
       String msg = "matches '${pattern}' as a '${name}' sequence";
       check_matches(msg, matches, 'sequence', [
@@ -667,8 +667,8 @@ void main() {
     final pws = genpws(pattern, prefixes, suffixes);
     for (final testCase in pws) {
       String password = testCase[0];
-      int i = testCase[1];
-      int j = testCase[2];
+      int? i = testCase[1];
+      int? j = testCase[2];
       final matches = matching.repeat_match(password);
       final msg = "matches embedded repeat patterns";
       check_matches(msg, matches, 'repeat', [
@@ -948,7 +948,7 @@ void main() {
       ],
     ]) {
       final pattern_name = testCase[0];
-      final List<int> ij = testCase[1];
+      final List<int> ij = testCase[1] as List<int>;
       final i = ij[0];
       final j = ij[1];
       bool included = false;

@@ -7,4 +7,4 @@ repository: https://github.com/careapp-inc/zxcvbn-dart
 dev_dependencies:
   test: any
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'

@@ -68,7 +68,7 @@ void main() {
     approx_equal(log10(n * p), log10(n) + log10(p), "product rule");
     approx_equal(log10(n / p), log10(n) - log10(p), "quotient rule");
     approx_equal(log10(Math.e), 1 / Math.log(10), "base switch rule");
-    approx_equal(log10(Math.pow(n, p)), p * log10(n), "power rule");
+    approx_equal(log10(Math.pow(n, p) as double), p * log10(n), "power rule");
     approx_equal(log10(n), Math.log(n) / Math.log(10), "base change rule");
   });
   test('search', () {
@@ -207,14 +207,14 @@ void main() {
 
       final base_guesses = scoring
           .most_guessable_match_sequence(
-              base_token, matching.omnimatch(base_token))
+              base_token as String, matching.omnimatch(base_token))
           .guesses;
       final match = PasswordMatch()
-        ..token = token
+        ..token = token as String?
         ..base_token = base_token
         ..base_guesses = base_guesses.round()
-        ..repeat_count = repeat_count;
-      final expected_guesses = base_guesses * repeat_count;
+        ..repeat_count = repeat_count as int?;
+      final expected_guesses = base_guesses * (repeat_count as num);
       final msg =
           "the repeat pattern '#{token}' has guesses of #{expected_guesses}";
       expect(scoring.repeat_guesses(match), expected_guesses, reason: msg);
@@ -232,8 +232,8 @@ void main() {
       final ascending = testCase[1];
       final guesses = testCase[2];
       final match = PasswordMatch()
-        ..token = token
-        ..ascending = ascending;
+        ..token = token as String?
+        ..ascending = ascending as bool?;
       final msg = "the sequence pattern '#{token}' has guesses of #{guesses}";
       expect(scoring.sequence_guesses(match), guesses, reason: msg);
     }
@@ -280,7 +280,7 @@ void main() {
       ..day = 1;
     String msg = "guesses for ${match.token} is 365 * distance_from_ref_year";
     expect(scoring.date_guesses(match),
-        365 * (scoring.REFERENCE_YEAR - match.year).abs(),
+        365 * (scoring.REFERENCE_YEAR - match.year!).abs(),
         reason: msg);
 
     match = PasswordMatch()
@@ -307,7 +307,7 @@ void main() {
         scoring.KEYBOARD_AVERAGE_DEGREE *
         // # - 1 term because: not counting spatial patterns of length 1
         // # eg for length==6, multiplier is 5 for needing to try len2,len3,..,len6
-        (match.token.length - 1));
+        (match.token!.length - 1));
     String msg =
         "with no turns or shifts, guesses is starts * degree * (len-1)";
     expect(scoring.spatial_guesses(match), base_guesses, reason: msg);
@@ -334,11 +334,11 @@ void main() {
       ..turns = 3
       ..shifted_count = 0;
     double guesses = 0;
-    int L = match.token.length;
+    int L = match.token!.length;
     final s = scoring.KEYBOARD_STARTING_POSITIONS;
     final d = scoring.KEYBOARD_AVERAGE_DEGREE;
     for (int i = 2; i <= L; i++) {
-      for (int j = 1; j <= Math.min<int>(match.turns, i - 1); j++) {
+      for (int j = 1; j <= Math.min<int>(match.turns!, i - 1); j++) {
         guesses += nCk(i - 1, j - 1) * s * Math.pow(d, j);
       }
     }
@@ -410,7 +410,7 @@ void main() {
       final word = testCase[0];
       final variants = testCase[1];
       String msg = "guess multiplier of #{word} is #{variants}";
-      PasswordMatch m = PasswordMatch()..token = word;
+      PasswordMatch m = PasswordMatch()..token = word as String?;
       expect(scoring.uppercase_variations(m), variants, reason: msg);
     }
   });
@@ -470,12 +470,12 @@ void main() {
       ],
     ]) {
       final word = testCase[0];
-      num v = testCase[1];
+      num v = testCase[1] as num;
       double variants = v.toDouble();
       final sub = testCase[2];
       match = PasswordMatch()
-        ..token = word
-        ..sub = sub
+        ..token = word as String?
+        ..sub = sub as Map<dynamic, dynamic>?
         ..l33t = !matching.empty(sub);
       String msg = "extra l33t guesses of #{word} is #{variants}";
       expect(scoring.l33t_variations(match), variants, reason: msg);

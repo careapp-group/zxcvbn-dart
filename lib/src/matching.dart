@@ -87,7 +87,7 @@ class matching {
   static List<PasswordMatch> sorted(List<PasswordMatch> matches) {
     // // sort on i primary, j secondary
     matches
-        .sort((m1, m2) => (m1.i - m2.i) != 0 ? (m1.i - m2.i) : (m1.j - m2.j));
+        .sort((m1, m2) => (m1.i! - m2.i!) != 0 ? (m1.i! - m2.i!) : (m1.j! - m2.j!));
     return matches;
   }
 
@@ -95,7 +95,7 @@ class matching {
 //  // omnimatch -- combine everything ----------------------------------------------
 //  // ------------------------------------------------------------------------------
 //
-  static omnimatch(String password) {
+  static omnimatch(String? password) {
     List<PasswordMatch> matches = [];
     final matchers = [
       dictionary_match,
@@ -118,7 +118,7 @@ class matching {
   //-------------------------------------------------------------------------------
 
   static List<PasswordMatch> dictionary_match(String password,
-      {Map<String, Map<String, int>> ranked_dictionaries}) {
+      {Map<String, Map<String, int>>? ranked_dictionaries}) {
     ranked_dictionaries ??= RANKED_DICTIONARIES;
     // _ranked_dictionaries variable is for unit testing purposes
     final List<PasswordMatch> matches = [];
@@ -152,18 +152,18 @@ class matching {
 
   static reverse_dictionary_match(
     String password, {
-    Map<String, Map<String, int>> ranked_dictionaries,
+    Map<String, Map<String, int>>? ranked_dictionaries,
   }) {
     ranked_dictionaries ??= RANKED_DICTIONARIES;
     final reversed_password = password.split('').reversed.join('');
     final matches = dictionary_match(reversed_password,
         ranked_dictionaries: ranked_dictionaries);
     for (PasswordMatch match in matches) {
-      match.token = match.token.split('').reversed.join(''); //// reverse back
+      match.token = match.token!.split('').reversed.join(''); //// reverse back
       match.reversed = true;
       //// map coordinates back to original string
-      int tempI = password.length - 1 - match.j;
-      match.j = password.length - 1 - match.i;
+      int tempI = password.length - 1 - match.j!;
+      match.j = password.length - 1 - match.i!;
       match.i = tempI;
     }
     return sorted(matches);
@@ -314,7 +314,7 @@ class matching {
       List<String> rest_keys = keys.sublist(1);
       final next_subs = <List<List<String>>>[];
 
-      for (final l33t_chr in table[first_key]) {
+      for (final l33t_chr in table[first_key]!) {
         for (final sub in subs) {
           int dup_l33t_index = -1;
           for (int i = 0; i < sub.length; i++) {
@@ -378,7 +378,7 @@ class matching {
       final subbed_password = translate(password, sub);
       for (final PasswordMatch match in dictionary_match(subbed_password,
           ranked_dictionaries: ranked_dictionaries)) {
-        final String token = password.substring(match.i, match.j + 1);
+        final String token = password.substring(match.i!, match.j! + 1);
         if (token.toLowerCase() == match.matched_word) {
           continue; // only return the matches that contain an actual substitution
         }
@@ -407,7 +407,7 @@ class matching {
             // filter single-character l33t matches to reduce noise.
             // otherwise '1' matches 'i', '4' matches 'a', both very common English words
             // with low dictionary rank.
-            match.token.length > 1)
+            match.token!.length > 1)
         .toList());
   }
   // ------------------------------------------------------------------------------
@@ -415,7 +415,7 @@ class matching {
   // ------------------------------------------------------------------------------
 
   static List<PasswordMatch> spatial_match(String password,
-      [Map<String, Map<String, List<String>>> graphs]) {
+      [Map<String, Map<String, List<String?>>?>? graphs]) {
     graphs ??= GRAPHS;
     final List<PasswordMatch> matches = [];
 
@@ -429,12 +429,12 @@ class matching {
       RegExp(r'[~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?]');
 
   static List<PasswordMatch> spatial_match_helper(
-      String password, Map<String, List<String>> graph, graph_name) {
+      String password, Map<String, List<String?>>? graph, graph_name) {
     final List<PasswordMatch> matches = [];
     int i = 0;
     while (i < password.length - 1) {
       int j = i + 1;
-      var last_direction = null;
+      dynamic last_direction = null;
       int turns = 0;
 
       int shifted_count;
@@ -451,7 +451,7 @@ class matching {
         bool found = false;
         int found_direction = -1;
         int cur_direction = -1;
-        final adjacents = graph[prev_char] ?? [];
+        final adjacents = graph![prev_char] ?? [];
         // consider growing pattern by one character if j hasn't gone over the edge.
         if (j < password.length) {
           String cur_char = password[j];
@@ -513,8 +513,8 @@ class matching {
     RegExp lazy = RegExp(r'(.+?)\1+');
     RegExp lazy_anchored = RegExp(r'^(.+?)\1+$');
     int lastIndex = 0;
-    RegExpMatch match;
-    String base_token;
+    RegExpMatch? match;
+    String? base_token;
 
     while (lastIndex < password.length) {
       String pattern = password.substring(lastIndex);
@@ -524,7 +524,7 @@ class matching {
         break;
       }
       final greedyLength = greedy_match.end - greedy_match.start;
-      final lazyLength = lazy_match.end - lazy_match.start;
+      final lazyLength = lazy_match!.end - lazy_match.start;
       if (greedyLength > lazyLength) {
         // greedy beats lazy for 'aabaab'
         //   greedy: [aabaab, aab]
@@ -534,7 +534,7 @@ class matching {
         // aabaab in aabaabaabaab.
         // run an anchored lazy match on greedy's repeated string
         // to find the shortest repeated string
-        base_token = lazy_anchored.firstMatch(match.group(0)).group(1);
+        base_token = lazy_anchored.firstMatch(match.group(0)!)!.group(1);
       } else {
         // lazy beats greedy for 'aaaaa'
         //   greedy: [aaaa,  aa]
@@ -543,11 +543,11 @@ class matching {
         base_token = match.group(1);
       }
       int i = lastIndex + match.start;
-      int j = lastIndex + match.start + match.group(0).length - 1;
+      int j = lastIndex + match.start + match.group(0)!.length - 1;
 
       // recursively match and score the base string
       final base_analysis = scoring.most_guessable_match_sequence(
-          base_token, omnimatch(base_token));
+          base_token!, omnimatch(base_token));
 
       final base_matches = base_analysis.sequence;
       final base_guesses = base_analysis.guesses;
@@ -559,7 +559,7 @@ class matching {
         ..base_token = base_token
         ..base_guesses = base_guesses.round()
         ..base_matches = base_matches
-        ..repeat_count = (match[0].length / base_token.length).round());
+        ..repeat_count = (match[0]!.length / base_token.length).round());
       lastIndex = j + 1;
     }
     return matches;
@@ -586,11 +586,11 @@ class matching {
     List<PasswordMatch> result = [];
     int i = 0;
     int j;
-    int last_delta = null;
+    int? last_delta = null;
 
-    void update(i, j, num delta) {
+    void update(i, j, num? delta) {
       if (j - i > 1 || (delta?.abs() ?? 0) == 1) {
-        if (0 < delta.abs() && delta.abs() <= MAX_DELTA) {
+        if (0 < delta!.abs() && delta.abs() <= MAX_DELTA) {
           String token = password.substring(i, j + 1);
 
           String sequence_name;
@@ -646,7 +646,7 @@ class matching {
   //-------------------------------------------------------------------------------
 
   static List<PasswordMatch> regex_match(String password,
-      [Map<String, RegExp> _regexen]) {
+      [Map<String, RegExp>? _regexen]) {
     _regexen ??= REGEXEN;
     final List<PasswordMatch> matches = [];
     _regexen.forEach((name, regex) {
@@ -658,13 +658,13 @@ class matching {
         if (rx_match == null) {
           break;
         }
-        String token = rx_match.group(0);
-        last_index = rx_match.start + rx_match.group(0).length - 1;
+        String? token = rx_match.group(0);
+        last_index = rx_match.start + rx_match.group(0)!.length - 1;
         matches.add(PasswordMatch()
           ..pattern = 'regex'
           ..token = token
           ..i = rx_match.start
-          ..j = rx_match.start + rx_match.group(0).length - 1
+          ..j = rx_match.start + rx_match.group(0)!.length - 1
           ..regex_name = name
           ..regex_match = rx_match);
       }
@@ -719,7 +719,7 @@ class matching {
           continue;
         }
         List candidates = [];
-        for (final split in DATE_SPLITS[token.length]) {
+        for (final split in DATE_SPLITS[token.length]!) {
           int k = split[0];
           int l = split[1];
           final dmy = map_ints_to_dmy([
@@ -745,10 +745,10 @@ class matching {
         Function metric =
             (candidate) => (candidate['year'] - scoring.REFERENCE_YEAR).abs();
 
-        int min_distance = metric(candidates[0]);
+        int? min_distance = metric(candidates[0]);
         for (final candidate in candidates.sublist(1)) {
           int distance = metric(candidate);
-          if (distance < min_distance) {
+          if (distance < min_distance!) {
             best_candidate = candidate;
             min_distance = distance;
           }
@@ -776,10 +776,10 @@ class matching {
         if (rx_match == null) {
           continue;
         }
-        final Map<String, int> dmy = map_ints_to_dmy([
-          int.parse(rx_match[1]),
-          int.parse(rx_match[3]),
-          int.parse(rx_match[4]),
+        final Map<String, int?>? dmy = map_ints_to_dmy([
+          int.parse(rx_match[1]!),
+          int.parse(rx_match[3]!),
+          int.parse(rx_match[4]!),
         ]);
         if (dmy == null) {
           continue;
@@ -809,7 +809,7 @@ class matching {
         if (match == other_match) {
           continue;
         }
-        if (other_match.i <= match.i && other_match.j >= match.j) {
+        if (other_match.i! <= match.i! && other_match.j! >= match.j!) {
           is_submatch = true;
           break;
         }
@@ -818,7 +818,7 @@ class matching {
     }).toList());
   }
 
-  static Map<String, int> map_ints_to_dmy(List<int> ints) {
+  static Map<String, int?>? map_ints_to_dmy(List<int> ints) {
     // given a 3-tuple, discard if:
     //   middle int is over 31 (for all dmy formats, years are never allowed in the middle)
     //   middle int is zero
@@ -858,10 +858,10 @@ class matching {
     ];
 
     for (final split in possible_year_splits) {
-      int y = split[0];
+      int y = split[0] as int;
       final rest = split[1];
       if (DATE_MIN_YEAR <= y && y <= DATE_MAX_YEAR) {
-        final dm = map_ints_to_dm(rest);
+        final dm = map_ints_to_dm(rest as List<int>);
         if (dm != null) {
           return {
             'year': y,
@@ -879,9 +879,9 @@ class matching {
     // given no four-digit year, two digit years are the most flexible int to match, so
     // try to parse a day-month out of ints[0..1] or ints[1..0]
     for (final split in possible_year_splits) {
-      int y = split[0];
+      int y = split[0] as int;
       final rest = split[1];
-      final dm = map_ints_to_dm(rest);
+      final dm = map_ints_to_dm(rest as List<int>);
       if (dm != null) {
         y = two_to_four_digit_year(y);
         return {
@@ -895,7 +895,7 @@ class matching {
     }
   }
 
-  static Map<String, int> map_ints_to_dm(List<int> ints) {
+  static Map<String, int>? map_ints_to_dm(List<int> ints) {
     for (List row in [ints, ints.reversed.toList()]) {
       int d = row[0];
       int m = row[1];

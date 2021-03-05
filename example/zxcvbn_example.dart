@@ -8,7 +8,7 @@ void main() {
   print('Password: ${result.password}');
   print('Score: ${result.score}');
   print(result.feedback.warning);
-  for (final suggestion in result.feedback.suggestions) {
+  for (final suggestion in result.feedback.suggestions!) {
     print(suggestion);
   }
 }
