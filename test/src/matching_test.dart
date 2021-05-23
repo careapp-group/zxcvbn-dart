@@ -368,7 +368,8 @@ void main() {
       final expected = testCase[1];
       final msg =
           "reduces l33t table to only the substitutions that a password might be employing";
-      expect(matching.relevant_l33t_subtable(pw as String, test_table), expected,
+      expect(
+          matching.relevant_l33t_subtable(pw as String, test_table), expected,
           reason: msg);
     }
 
@@ -405,8 +406,10 @@ void main() {
         ]
       ],
     ]) {
-      final Map<String, List<String>> table = testCase[0] as Map<String, List<String>>;
-      final List<Map<String, String>> subs = testCase[1] as List<Map<String, String>>;
+      final Map<String, List<String>> table =
+          testCase[0] as Map<String, List<String>>;
+      final List<Map<String, String>> subs =
+          testCase[1] as List<Map<String, String>>;
       final msg =
           "enumerates the different sets of l33t substitutions a password might be using";
       expect(matching.enumerate_l33t_subs(table), subs, reason: msg);
@@ -565,7 +568,8 @@ void main() {
       final turns = testCase[2];
       final shifts = testCase[3];
 
-      final Map<String, Map<String, List<String?>>?> _graphs = <String, Map<String, List<String>>?>{};
+      final Map<String, Map<String, List<String?>>?> _graphs =
+          <String, Map<String, List<String?>>?>{};
       _graphs[keyboard as String] = adjacency_graphs[keyboard];
       List<PasswordMatch> matches = matching.spatial_match(pattern, _graphs);
       String msg = "matches '#{pattern}' as a #{keyboard} pattern";
