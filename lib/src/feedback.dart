@@ -11,8 +11,8 @@ class feedback {
   static Feedback default_feedback = Feedback()
     ..warning = ''
     ..suggestions = [
-      "Use a few words, avoid common phrases"
-          "No need for symbols, digits, or uppercase letters"
+      "Use a few words, avoid common phrases",
+      "No need for symbols, digits, or uppercase letters"
     ];
 
   static Feedback get_feedback(score, List<PasswordMatch> sequence) {
