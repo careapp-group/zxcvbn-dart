@@ -213,12 +213,14 @@ class scoring {
       // find the final best sequence length and score
       dynamic l = null;
       double g = double.infinity;
-      optimal['g']![k].forEach((candidate_l, candidate_g) {
-        if (candidate_g < g) {
-          l = candidate_l;
-          g = candidate_g;
-        }
-      });
+      if (k >= 0) {
+        optimal['g']![k].forEach((candidate_l, candidate_g) {
+          if (candidate_g < g) {
+            l = candidate_l;
+            g = candidate_g;
+          }
+        });
+      }
 
       while (k >= 0) {
         var m = optimal['m']![k][l];
