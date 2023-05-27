@@ -773,6 +773,19 @@ void main() {
         'regex_name': [name]
       });
     }
+
+    String password = '20041910';
+    List<PasswordMatch> matches = matching.regex_match(password);
+    String msg = "matches multiple recent_year patterns";
+    check_matches(msg, matches, 'regex', [
+      '2004',
+      '1910'
+    ], [
+      [0, 3],
+      [4, 7]
+    ], {
+      'regex_name': ['recent_year', 'recent_year']
+    });
   });
 
   test('date matching', () {

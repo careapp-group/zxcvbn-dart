@@ -650,24 +650,16 @@ class matching {
     _regexen ??= REGEXEN;
     final List<PasswordMatch> matches = [];
     _regexen.forEach((name, regex) {
-      int last_index = 0;
-
-      while (last_index < password.length) {
-        final pattern = password.substring(last_index);
-        final rx_match = regex.firstMatch(pattern);
-        if (rx_match == null) {
-          break;
-        }
-        String? token = rx_match.group(0);
-        last_index = rx_match.start + rx_match.group(0)!.length - 1;
+      regex.allMatches(password).forEach((rx_match) {
+        String? token = rx_match[0];
         matches.add(PasswordMatch()
           ..pattern = 'regex'
           ..token = token
           ..i = rx_match.start
-          ..j = rx_match.start + rx_match.group(0)!.length - 1
+          ..j = rx_match.start + rx_match[0]!.length - 1
           ..regex_name = name
           ..regex_match = rx_match);
-      }
+      });
     });
     return sorted(matches);
   }
