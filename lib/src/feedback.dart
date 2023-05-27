@@ -28,7 +28,7 @@ class feedback {
 
     //# tie feedback to the longest match for longer sequences
     PasswordMatch longest_match = sequence[0];
-    Feedback feedback = Feedback();
+    Feedback? feedback = Feedback();
     for (final match in sequence.sublist(1)) {
       if (match.token!.length > longest_match.token!.length) {
         longest_match = match;
@@ -50,13 +50,14 @@ class feedback {
     return feedback;
   }
 
-  static Feedback get_match_feedback(PasswordMatch match, bool is_sole_match) {
+  static Feedback? get_match_feedback(PasswordMatch match, bool is_sole_match) {
     String? warning;
     switch (match.pattern) {
       case 'dictionary':
         return get_dictionary_match_feedback(match, is_sole_match);
 
       case 'spatial':
+        // ignore: unused_local_variable
         String layout = match.graph!.toUpperCase();
         if (match.turns == 1) {
           warning = 'Straight rows of keys are easy to guess';
@@ -64,8 +65,9 @@ class feedback {
           warning = 'Short keyboard patterns are easy to guess';
         }
         return Feedback(
-            warning: warning,
-            suggestions: ['Use a longer keyboard pattern with more turns']);
+          warning: warning,
+          suggestions: ['Use a longer keyboard pattern with more turns'],
+        );
 
       case 'repeat':
         if (match.base_token!.length == 1) {
@@ -74,8 +76,9 @@ class feedback {
           'Repeats like "abcabcabc" are only slightly harder to guess than "abc"';
         }
         return Feedback(
-            warning: warning,
-            suggestions: ['Avoid repeated words and characters']);
+          warning: warning,
+          suggestions: ['Avoid repeated words and characters'],
+        );
 
       case 'sequence':
         return Feedback(
@@ -86,20 +89,22 @@ class feedback {
       case 'regex':
         if (match.regex_name == 'recent_year') {
           return Feedback(
-              warning: "Recent years are easy to guess",
-              suggestions: [
-                'Avoid recent years'
-                    'Avoid years that are associated with you'
-              ]);
+            warning: "Recent years are easy to guess",
+            suggestions: [
+              'Avoid recent years',
+              'Avoid years that are associated with you'
+            ],
+          );
         }
         break;
 
       case 'date':
-        return Feedback(warning: "Dates are often easy to guess", suggestions: [
-          'Avoid dates and years that are associated with you'
-        ]);
+        return Feedback(
+          warning: "Dates are often easy to guess",
+          suggestions: ['Avoid dates and years that are associated with you'],
+        );
     }
-    return default_feedback;
+    return null;
   }
 
   static Feedback get_dictionary_match_feedback(
